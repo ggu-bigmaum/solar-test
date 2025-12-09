@@ -1,7 +1,8 @@
 # 파일명: 사용중_cal_251113.py
-
 # 통합 시장잠재량 분석 (건물벽면 포함)
 ## Package Load
+
+#%%
 import os
 import re
 import glob
@@ -25,6 +26,9 @@ from shapely.geometry import box
 import folium
 from branca.colormap import linear
 import contextily as ctx
+#%%
+
+
 
 # 한글 폰트 설정
 plt.rcParams['font.family'] = 'Malgun Gothic'
@@ -468,7 +472,7 @@ def main(scenario_name: str,
     
     # 1. 데이터 불러오기
     print("데이터 로딩 중...")
-    parameter = pd.read_excel('시장잠재량 Parameter_4.xlsx')
+    parameter = pd.read_excel('./1. Raw Data/시장잠재량 Parameter_4.xlsx')
     parameter_dict = parameter.iloc[0].to_dict()
     # df = pd.read_csv('data_merge.csv', low_memory=False)
     
@@ -737,3 +741,21 @@ def main(scenario_name: str,
 
     # 11. 결과 반환
     return df_result
+#%%
+
+
+
+
+#실행
+# 기존 시나리오 컬럼명 중 하나를 인자로 전달
+scenario_name = 'calc_reject_배제29종(실조례안)'
+# main 함수 실행
+df_result = main(scenario_name)
+# 결과 DataFrame 확인
+print(df_result.head())
+
+
+
+#sigungu CD, ADM CD
+#아웃풋에 현재시간 추가
+#LCOE 추출용 인자설정 또는 함수개발
