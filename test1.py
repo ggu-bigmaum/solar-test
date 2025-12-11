@@ -455,17 +455,19 @@ def summarize_sigungu_by_sido(df, selected_sido):
 # create_histogram, plot_wall_area_vs_irradiance, summarize_by_sido, 
 # summarize_by_sigungu, save_result_csv 함수는 정의되어 있다고 가정합니다.
 
-def main(scenario_name: str, 
-         print_summary: bool = False, 
-         create_viz: bool = False, 
-         summarize_area: bool = False) -> pd.DataFrame:
+def main(scenario_name: str,
+         print_summary: bool = False,
+         create_viz: bool = False,
+         summarize_area: bool = False,
+         return_lcoe: bool = False) -> pd.DataFrame:
     """
     메인 실행 함수 (건물벽면 포함)
-    
+
     scenario_name: 실행할 시나리오의 컬럼명.
     print_summary: 시장잠재량 결과 요약 출력 여부. (6번)
     create_viz: 건물벽면 시각화 생성 여부. (7번)
     summarize_area: 시도/시군구별 집계 실행 여부. (8번)
+    return_lcoe: LCOE 컬럼 포함한 전체 데이터 반환 여부. (기본값: False, 시장잠재량만 반환)
     """
     global parameter_dict, df_lcoe, smp_rec_values
     print(f"=== 통합 시장잠재량 분석 시작 (시나리오: {scenario_name}) ===")
@@ -649,7 +651,7 @@ def main(scenario_name: str,
     df = df.assign(**df_lcoe[['LCOE_수상형(원/kWh)', 'LCOE_건물지붕(원/kWh)', 
                              'LCOE_영농형_20년(원/kWh)', 'LCOE_영농형_8년(원/kWh)', 
                              'LCOE_영농형_23년(원/kWh)', 'LCOE_토지(원/kWh)']])
-
+    ##### LOCE 관련 인자를 만들수없나??
     
     # 5. smp_rec_values 계산
     print("SMP/REC 값 계산 중...")
@@ -740,22 +742,57 @@ def main(scenario_name: str,
     print("=== 시나리오 분석 완료! ===")
 
     # 11. 결과 반환
-    return df_result
+    if return_lcoe:
+        # LCOE 컬럼 포함한 전체 데이터 반환
+        return df_lcoe
+    else:
+        # 기본: 시장잠재량 결과만 반환
+        return df_result
 #%%
-
-
-
-
-#실행
+df_result.columns.to_list()
+#%%
+# 실행
 # 기존 시나리오 컬럼명 중 하나를 인자로 전달
-scenario_name = 'calc_reject_배제29종(실조례안)'
-# main 함수 실행
-df_result = main(scenario_name)
-# 결과 DataFrame 확인
-print(df_result.head())
+# scenario_name = 'calc_reject_배제29종(실조례안)'
+scenario_name = 'calc_reject_영농지_S1'
+df_result = main(scenario_name)  # main 함수 실행
+print(df_result.head()) # 결과 DataFrame 확인
 
 
 
 #sigungu CD, ADM CD
 #아웃풋에 현재시간 추가
 #LCOE 추출용 인자설정 또는 함수개발
+
+
+
+
+#%%
+def summarize_market_potential(df):
+    """
+    시장잠재량 연도별 설비용량(GW) / 발전량(TWh/년) 합계를 표로 만들어주는 함수
+    df : 입력 데이터프레임
+    """
+    # 합계 계산
+    sum_8_gw  = df['시장잠재량_영농형_8년_설비용량(GW)'].sum()
+    sum_20_gw = df['시장잠재량_영농형_20년_설비용량(GW)'].sum()
+    sum_23_gw = df['시장잠재량_영농형_23년_설비용량(GW)'].sum()
+
+    sum_8_twh  = df['시장잠재량_영농형_8년_발전량(TWh/년)'].sum()
+    sum_20_twh = df['시장잠재량_영농형_20년_발전량(TWh/년)'].sum()
+    sum_23_twh = df['시장잠재량_영농형_23년_발전량(TWh/년)'].sum()
+
+    # 표로 정리
+    df_summary = pd.DataFrame({
+        '구분': [ '시장 잠재량(8년)','시장 잠재량(20년)','시장 잠재량(23년)'],
+        '설비용량(GW)': [ sum_8_gw, sum_20_gw, sum_23_gw],
+        '발전량(TWh/년)': [sum_8_twh, sum_20_twh , sum_23_twh]
+    })
+    # 보기 좋게 반올림
+    df_summary = df_summary.round(2)
+    return df_summary
+result = summarize_market_potential(df_result)
+result
+#%%
+
+
