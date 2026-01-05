@@ -126,10 +126,10 @@ file_list = [
     './Dist_kepco_IDcorrected_32652.csv',
     './GRID_100m_bstats_240806_id_added(v1.1).csv',
     './GRID_100m_bstats_fa_240806_id_added(v1.1).csv',
-    './영농지_S1.csv',
-    './영농지_S2.csv',
-    './영농지_S3.csv',
-    './영농지_S4.csv',
+    # './영농지_S1.csv',
+    # './영농지_S2.csv',
+    # './영농지_S3.csv',
+    # './영농지_S4.csv',
 ]
 
 
