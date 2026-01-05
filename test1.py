@@ -486,10 +486,10 @@ def main(scenario_name: str,
     # 2. 연산 전 기초 계산
     print("기초 데이터 처리 중...")
     start_time = time.time()
-    df = df[df['inland_are'] > 0].copy()
-    
+    df = df[df['inland_area'] > 0].copy()
+
     df['개별공시지가(원/m2)'] = df['개별공시지가(원/m2)'].astype(str).str.replace(",", "").astype(float)
-    df['inland_area(km2)'] = df['inland_are'] / 10 ** 6
+    df['inland_area(km2)'] = df['inland_area'] / 10 ** 6
     
     # 변수 처리
     df['산지_Area_(km2)'] = df['산지_Area_(m2)'] / 10 ** 6
@@ -763,6 +763,7 @@ print(df_result.head()) # 결과 DataFrame 확인
 #sigungu CD, ADM CD
 #아웃풋에 현재시간 추가
 #LCOE 추출용 인자설정 또는 함수개발
+
 
 
 
